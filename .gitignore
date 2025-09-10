@@ -1,0 +1,16 @@
+# Dependencies
+/node_modules
+
+# Build artifacts
+/.next/
+/out/
+
+# Prisma
+/prisma/client
+
+# Local environment variables
+.env
+.env*.local
+
+# Vercel
+.vercel
