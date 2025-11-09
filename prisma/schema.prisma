@@ -1,17 +1,14 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Specifies the generator for the Prisma Client (the code that lets us talk to the DB)
 generator client {
   provider = "prisma-client-js"
 }
 
-// Defines our database connection
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 
 // --- DATA MODELS ---
 
@@ -33,13 +30,13 @@ model Recipe {
   id            String    @id @default(cuid()) // Unique ID for the recipe
   title         String    // The name of the recipe
   description   String?   // A short description (optional)
-  ingredients   Json      // Storing ingredients as a JSON object for flexibility (e.g., [{name: "flour", amount: "1 cup"}])
+  ingredients   Json      // Storing ingredients as a JSON object (e.g., [{name: "flour", amount: "1 cup"}])
   instructions  Json      // Storing instructions as a JSON object (e.g., ["Step 1: ...", "Step 2: ..."])
   prepTime      Int?      // Preparation time in minutes (optional)
   cookTime      Int?      // Cooking time in minutes (optional)
   isPublic      Boolean   @default(false) // Whether the recipe is shared with the community
   createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  updatedAt     DateTime    @updatedAt
 
   // --- Relations ---
   author        User      @relation(fields: [authorId], references: [id]) // Connects this recipe to a User
@@ -54,7 +51,7 @@ model MealPlan {
   name      String    @default("My Weekly Plan") // e.g., "High-Protein Week"
   startDate DateTime  // The start date of the plan
   createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  updatedAt DateTime    @updatedAt
 
   // --- Relations ---
   user      User      @relation(fields: [userId], references: [id])
