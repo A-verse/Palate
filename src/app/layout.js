@@ -5,8 +5,8 @@ import Header from '@/components/Header'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
-  title: 'NutriVerse',
-  description: 'Your intelligent culinary assistant',
+  title: 'Palate',
+  description: 'Your personal taste, perfected.',
 }
 
 export default function RootLayout({ children }) {

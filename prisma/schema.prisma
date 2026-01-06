@@ -10,65 +10,62 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// --- DATA MODELS ---
-
-// Model for our application users
 model User {
-  id        String      @id @default(cuid()) // Unique ID for the user
-  email     String      @unique // User's email, must be unique
-  name      String?     // User's name (optional)
-  createdAt DateTime    @default(now())
-  updatedAt DateTime    @updatedAt
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
-  // --- Relations ---
-  recipes   Recipe[]    // A user can have many recipes
-  mealPlans MealPlan[]  // A user can have many meal plans
+  recipes   Recipe[]
+  mealPlans MealPlan[]
+
+  @@map("users")
 }
 
-// Model for a single recipe
 model Recipe {
-  id            String    @id @default(cuid()) // Unique ID for the recipe
-  title         String    // The name of the recipe
-  description   String?   // A short description (optional)
-  ingredients   Json      // Storing ingredients as a JSON object (e.g., [{name: "flour", amount: "1 cup"}])
-  instructions  Json      // Storing instructions as a JSON object (e.g., ["Step 1: ...", "Step 2: ..."])
-  prepTime      Int?      // Preparation time in minutes (optional)
-  cookTime      Int?      // Cooking time in minutes (optional)
-  isPublic      Boolean   @default(false) // Whether the recipe is shared with the community
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime    @updatedAt
-
-  // --- Relations ---
-  author        User      @relation(fields: [authorId], references: [id]) // Connects this recipe to a User
-  authorId      String    // The ID of the user who created it
-
-  mealPlanEntries MealPlanEntry[] // A recipe can be in many meal plan entries
-}
-
-// Model for a user's weekly meal plan
-model MealPlan {
-  id        String    @id @default(cuid())
-  name      String    @default("My Weekly Plan") // e.g., "High-Protein Week"
-  startDate DateTime  // The start date of the plan
-  createdAt DateTime  @default(now())
-  updatedAt DateTime    @updatedAt
-
-  // --- Relations ---
-  user      User      @relation(fields: [userId], references: [id])
-  userId    String
-  entries   MealPlanEntry[] // A meal plan has many entries
-}
-
-// Represents a recipe assigned to a specific day and meal type in a MealPlan
-model MealPlanEntry {
   id          String   @id @default(cuid())
-  dayOfWeek   String   // e.g., "Monday", "Tuesday"
-  mealType    String   // e.g., "Breakfast", "Lunch", "Dinner"
+  title       String
+  description String?
+  prepTime    Int?
+  cookTime    Int?
+  ingredients Json     // Array of strings or objects
+  instructions Json    // Array of strings
+  imageUrl    String?
+  authorId    String
+  author      User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
   createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
-  // --- Relations ---
-  mealPlan    MealPlan @relation(fields: [mealPlanId], references: [id])
-  mealPlanId  String
-  recipe      Recipe   @relation(fields: [recipeId], references: [id])
-  recipeId    String
+  mealPlans   MealPlanRecipe[]
+
+  @@map("recipes")
+}
+
+model MealPlan {
+  id        String   @id @default(cuid())
+  name      String
+  startDate DateTime
+  endDate   DateTime
+  authorId  String
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  recipes   MealPlanRecipe[]
+
+  @@map("meal_plans")
+}
+
+model MealPlanRecipe {
+  id         String   @id @default(cuid())
+  mealPlanId String
+  recipeId   String
+  dayOfWeek  Int      // 0-6 for Mon-Sun
+  mealType   String   // breakfast, lunch, dinner
+  mealPlan   MealPlan @relation(fields: [mealPlanId], references: [id], onDelete: Cascade)
+  recipe     Recipe   @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+
+  @@unique([mealPlanId, dayOfWeek, mealType])
+  @@map("meal_plan_recipes")
 }
