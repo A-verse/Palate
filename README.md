@@ -29,6 +29,16 @@ Absolutely. **Palate** is a modern, full-stack web application designed to be yo
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
+## Environment Setup
+
+Create a `.env.local` file in the root directory with the following variables:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+DATABASE_URL=your_postgresql_connection_string
+```
+
 ## Docker
 
 To run the app in a container:
@@ -37,6 +47,66 @@ To run the app in a container:
 docker build -t palate .
 docker run -p 3000:3000 palate
 ```
+
+## Project Structure
+
+```
+src/
+├── app/                          # Next.js 14 App Router
+│   ├── (auth)/                   # Public authentication routes
+│   │   ├── login/
+│   │   └── signup/
+│   ├── (main)/                   # Protected app routes
+│   │   ├── dashboard/
+│   │   ├── recipes/              # Recipe management
+│   │   │   ├── page.js           # Recipe list
+│   │   │   ├── new/              # Create recipe form
+│   │   │   └── [id]/             # Recipe details
+│   │   └── planner/              # Meal planning
+│   ├── api/                      # API routes
+│   │   ├── recipes/              # Recipe CRUD operations
+│   │   └── meal-plans/           # Meal plan management
+│   ├── layout.js                 # Root layout
+│   ├── page.js                   # Landing page
+│   └── globals.css
+├── components/                   # Reusable UI components
+│   ├── Header.jsx
+│   ├── RecipeCard.jsx
+│   ├── MealPlanner.jsx
+│   ├── LogoutButton.jsx
+│   └── landing/                  # Landing page components
+└── lib/                          # Utilities
+    └── supabase/
+        ├── client.js             # Browser-side Supabase client
+        └── server.js             # Server-side Supabase client
+
+prisma/
+└── schema.prisma                 # Database schema (PostgreSQL)
+
+middleware.js                      # Route protection middleware
+```
+
+## API Endpoints
+
+### Recipes
+- `GET /api/recipes` - Fetch all recipes for the authenticated user
+- `POST /api/recipes` - Create a new recipe
+  - Body: `{ title, description, prepTime, cookTime, ingredients, instructions, imageUrl }`
+
+### Meal Plans
+- `POST /api/meal-plans/add` - Add a recipe to the meal plan
+  - Body: `{ recipeId, day, mealType }`
+- `POST /api/meal-plans/remove` - Remove a recipe from the meal plan
+  - Body: `{ mealPlanId }`
+
+## Roadmap / Planned Features
+
+- **Image Upload** - Users can upload recipe photos directly from the recipe form (Supabase Storage integration)
+- **Web Scraper** - Extract recipe data from URLs and auto-fill the recipe form
+- **AI Recipe Generation** - Use Gemini API to generate recipes based on available ingredients
+- **Smart Meal Planning** - AI-powered weekly meal planner with nutritional recommendations
+- **Community Features** - Share recipes and meal plans with other users
+- **Advanced Search** - Filter recipes by cuisine, dietary restrictions, prep time, etc.
 
 Here is a breakdown of what the website is, its core features, and the technology powering it.
 
