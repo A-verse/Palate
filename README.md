@@ -1,52 +1,117 @@
 # Palate - Your Personal Taste, Perfected
 
-Absolutely. **Palate** is a modern, full-stack web application designed to be your intelligent culinary assistant. It goes beyond a simple recipe book by integrating smart features to help you plan, cook, and organize your meals.
+**A modern MERN stack culinary assistant for recipe management, AI-powered discovery, and intelligent meal planning.**
 
-## Getting Started
+---
 
-1. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+## ⚠️ IMPORTANT: Project Architecture
 
-2. **Set up the database:**
-   - Create a Supabase project at [supabase.com](https://supabase.com)
-   - Copy your project URL and anon key to `.env.local`
-   - Run database migrations:
-     ```bash
-     npx prisma db push
-     ```
+**This is a MERN Stack application, NOT Next.js.**
 
-3. **Generate Prisma client:**
-   ```bash
-   npx prisma generate
-   ```
+The repository structure:
+- ✅ **`/client`** - React 18 + Vite frontend (ACTIVE)
+- ✅ **`/server`** - Express + MongoDB backend (ACTIVE)  
+- ❌ **Root Next.js files** - LEGACY/UNUSED
 
-4. **Run the development server:**
-   ```bash
-   npm run dev
-   ```
+**📖 Read [ARCHITECTURE.md](ARCHITECTURE.md) for complete setup instructions.**
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-## Environment Setup
+## 🚀 Quick Start
 
-Create a `.env.local` file in the root directory with the following variables:
+### Prerequisites
+- Node.js 18+
+- MongoDB (local or Atlas)
+- Supabase account (for image storage)
 
-```env
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-DATABASE_URL=your_postgresql_connection_string
-```
+### Setup
 
-## Docker
-
-To run the app in a container:
-
+**1. Install dependencies for both client and server:**
 ```bash
-docker build -t palate .
-docker run -p 3000:3000 palate
+# From root directory
+npm run install:all
+
+# OR manually:
+cd client && npm install
+cd ../server && npm install
 ```
+
+**2. Configure environment variables:**
+
+**Backend** (`server/.env`):
+```env
+PORT=5000
+MONGO_URI=mongodb://localhost:27017/palate
+JWT_SECRET=your_secret_key_here
+SUPABASE_URL=https://ixqrucfraftqqttiubmg.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+FRONTEND_URL=http://localhost:5173
+```
+
+**Frontend** (`client/.env`):
+```env
+VITE_API_URL=http://localhost:5000/api
+VITE_SUPABASE_URL=https://ixqrucfraftqqttiubmg.supabase.co
+VITE_SUPABASE_ANON_KEY=your_anon_key
+VITE_SUPABASE_BUCKET=recipes
+```
+
+**3. Start the application:**
+
+Open **two terminals**:
+
+**Terminal 1 - Backend:**
+```bash
+cd server
+npm run dev
+# → http://localhost:5000
+```
+
+**Terminal 2 - Frontend:**
+```bash
+cd client
+npm run dev
+# → http://localhost:5173
+```
+
+**4. Open in browser:**  
+Visit [http://localhost:5173](http://localhost:5173)
+
+---
+
+## 🚨 Troubleshooting
+
+### "EADDRINUSE: address already in use"
+
+**Windows (PowerShell):**
+```powershell
+# Find process on port 5000 (backend)
+netstat -ano | findstr :5000
+
+# Kill it (replace PID)
+taskkill /PID 1234 /F
+```
+
+**macOS/Linux:**
+```bash
+lsof -ti:5000 | xargs kill -9
+```
+
+### Port conflicts?
+Change the port in `server/.env`:
+```env
+PORT=5001
+```
+
+---
+
+## 📚 Documentation
+
+- [**ARCHITECTURE.md**](ARCHITECTURE.md) - Full project structure and startup guide
+- [**NETLIFY_DEPLOYMENT.md**](NETLIFY_DEPLOYMENT.md) - Deploy frontend to Netlify
+- [**DEPLOYMENT_CHECKLIST.md**](DEPLOYMENT_CHECKLIST.md) - Full production deployment
+
+---
 
 ## Project Structure
 

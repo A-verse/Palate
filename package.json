@@ -3,10 +3,12 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "dev": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'Please run: cd client && npm run dev (for frontend)' && echo 'Or: cd server && npm run dev (for backend)' && echo 'See ARCHITECTURE.md for details.' && exit 1",
+    "build": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'See ARCHITECTURE.md for correct build instructions.' && exit 1",
+    "start": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'See ARCHITECTURE.md for correct start instructions.' && exit 1",
+    "dev:client": "cd client && npm run dev",
+    "dev:server": "cd server && npm run dev",
+    "install:all": "cd client && npm install && cd ../server && npm install"
   },
   "dependencies": {
     "@prisma/client": "^5.7.0",

@@ -1,0 +1,9 @@
+⚠️ NOTICE: This root directory contains LEGACY Next.js files that are NOT used.
+
+The actual application is a MERN stack:
+- Frontend: /client (React + Vite)
+- Backend: /server (Express + MongoDB)
+
+DO NOT run npm commands from this directory.
+
+See ARCHITECTURE.md for correct startup instructions.
