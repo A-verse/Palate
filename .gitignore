@@ -1,9 +1,12 @@
 # Dependencies
 /node_modules
+**/node_modules
 
 # Build artifacts
 /.next/
 /out/
+/client/dist
+/client/.vite
 
 # Prisma
 /prisma/client
