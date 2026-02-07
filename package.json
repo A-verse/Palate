@@ -1,35 +1,14 @@
 {
   "name": "palate",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Palate - Your personal taste, perfected. A MERN stack culinary assistant.",
   "private": true,
   "scripts": {
-    "dev": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'Please run: cd client && npm run dev (for frontend)' && echo 'Or: cd server && npm run dev (for backend)' && echo 'See ARCHITECTURE.md for details.' && exit 1",
-    "build": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'See ARCHITECTURE.md for correct build instructions.' && exit 1",
-    "start": "echo '⚠️  ERROR: This is NOT a Next.js project!' && echo 'See ARCHITECTURE.md for correct start instructions.' && exit 1",
     "dev:client": "cd client && npm run dev",
     "dev:server": "cd server && npm run dev",
+    "build:client": "cd client && npm run build",
+    "build:server": "cd server && npm run build",
+    "start:server": "cd server && npm start",
     "install:all": "cd client && npm install && cd ../server && npm install"
-  },
-  "dependencies": {
-    "@prisma/client": "^5.7.0",
-    "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.38.4",
-    "framer-motion": "^10.16.16",
-    "lucide-react": "^0.294.0",
-    "next": "14.0.4",
-    "react": "^18",
-    "react-dom": "^18"
-  },
-  "devDependencies": {
-    "@types/node": "^20",
-    "@types/react": "^18",
-    "@types/react-dom": "^18",
-    "autoprefixer": "^10.0.1",
-    "eslint": "^8",
-    "eslint-config-next": "14.0.4",
-    "postcss": "^8",
-    "prisma": "^5.7.0",
-    "tailwindcss": "^3.3.0",
-    "typescript": "^5"
   }
 }
