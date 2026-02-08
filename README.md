@@ -1,49 +1,46 @@
 # Palate
 
-Your personal taste, perfected. A MERN stack culinary assistant for recipe management, AI-powered discovery, and meal planning.
+Your personal taste, perfected. A Next.js culinary assistant for recipe management, AI-powered discovery, and meal planning.
 
 ## Overview
 
-Palate is a full-stack web application that helps users discover, save, and organize recipes. The platform features AI-assisted recipe generation, image upload to cloud storage, and an intuitive meal planning interface.
+Palate is a full-stack web application built with Next.js 14 that helps users discover, save, and organize recipes. The platform features AI-assisted recipe generation, image upload to cloud storage, and an intuitive meal planning interface.
 
 ## Tech Stack
 
-Frontend:
-- React 18 with Vite
-- React Router 7
-- Axios HTTP client
+- Next.js 14 with App Router
+- React 18
+- Prisma ORM with PostgreSQL
+- Supabase Auth and Storage
 - Tailwind CSS
-- Framer Motion for animations
-
-Backend:
-- Express.js
-- MongoDB with Mongoose
-- JWT authentication
-- Supabase Storage
-
-Deployment:
-- Netlify for frontend
-- Render for backend
-- MongoDB Atlas for database
-- Supabase for object storage
+- Framer Motion
+- Lucide React icons
 
 ## Architecture
 
-MERN (MongoDB, Express, React, Node.js) monorepo structure:
-
 ```
 palate/
-├── client/                 # React frontend
-│   ├── src/
-│   ├── public/
-│   ├── vite.config.js
-│   └── netlify.toml
-├── server/                 # Express backend
-│   ├── routes/
-│   ├── models/
-│   ├── middleware/
-│   └── server.js
-└── netlify.toml           # Monorepo deployment config
+ app/
+    (auth)/
+       login/
+       signup/
+    (main)/
+       dashboard/
+       recipes/
+       planner/
+    api/
+       recipes/
+       meal-plans/
+    layout.js
+    page.js
+    globals.css
+ components/
+ lib/
+    supabase/
+ prisma/
+    schema.prisma
+ public/
+ middleware.js
 ```
 
 ## Getting Started
@@ -51,8 +48,7 @@ palate/
 ### Prerequisites
 
 - Node.js 20+
-- npm 10+
-- MongoDB (local or Atlas)
+- PostgreSQL database
 - Supabase account
 
 ### Installation
@@ -60,139 +56,98 @@ palate/
 ```bash
 git clone https://github.com/A-verse/Palate.git
 cd Palate
-npm run install:all
+npm install
 ```
 
 ### Environment Setup
 
-Create `server/.env`:
+Create `.env.local`:
+
 ```
-PORT=5000
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/palate
-JWT_SECRET=your_jwt_secret_here
-SUPABASE_URL=https://ixqrucfraftqqttiubmg.supabase.co
+DATABASE_URL=postgresql://user:password@host:5432/palate
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
-FRONTEND_URL=http://localhost:5173
 ```
 
-Create `client/.env`:
-```
-VITE_API_URL=http://localhost:5000/api
-VITE_SUPABASE_URL=https://ixqrucfraftqqttiubmg.supabase.co
-VITE_SUPABASE_ANON_KEY=your_anon_key
-VITE_SUPABASE_BUCKET=recipes
-```
+### Database Setup
 
-### Running Locally
-
-Terminal 1 - Backend:
 ```bash
-cd server
+npx prisma generate
+npx prisma db push
+```
+
+### Development
+
+```bash
 npm run dev
 ```
 
-Terminal 2 - Frontend:
-```bash
-cd client
-npm run dev
-```
-
-Frontend: http://localhost:5173
-Backend: http://localhost:5000
+Open http://localhost:3000
 
 ## Available Scripts
 
-root:
-- `npm run install:all` - Install dependencies
-- `npm run dev:client` - Start frontend
-- `npm run dev:server` - Start backend
-- `npm run build:client` - Build frontend
-- `npm run build:server` - Build backend
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
 
-client/:
-- `npm run dev` - Development server
-- `npm run build` - Production build
-- `npm run preview` - Preview build
+## API Routes
 
-server/:
-- `npm run dev` - Development server
-- `npm run start` - Production server
+### Recipes
 
-## API
+- `POST /api/recipes` - Create recipe
+- `GET /api/recipes` - List user recipes
+- `PUT /api/recipes` - Update recipe
+- `DELETE /api/recipes` - Delete recipe
 
-Base: `http://localhost:5000/api`
+### Meal Plans
 
-Auth:
-- POST `/auth/register` - Create account
-- POST `/auth/login` - Login
-- GET `/auth/profile` - Current user
-
-Recipes:
-- GET `/recipes` - All recipes
-- POST `/recipes` - Create
-- GET `/recipes/:id` - Get recipe
-- PUT `/recipes/:id` - Update
-- DELETE `/recipes/:id` - Delete
-
-Upload:
-- POST `/upload` - Upload image
-- DELETE `/upload/:path` - Delete image
+- `POST /api/meal-plans/add` - Add meal to plan
+- `POST /api/meal-plans/remove` - Remove meal from plan
 
 ## Deployment
 
-Frontend (Netlify):
+### Vercel
+
 1. Push code to GitHub
-2. Connect repository to Netlify
-3. Set environment variables
-4. Netlify auto-deploys on push
+2. Import repository in Vercel
+3. Add environment variables
+4. Deploy
 
-Backend (Render):
-1. Create Web Service on Render
-2. Connect GitHub repository
-3. Configure environment variables
-4. Start command: `npm start`
+Vercel will automatically detect Next.js and configure the build.
 
-Database (MongoDB Atlas):
-- Create cluster and user
-- Use connection string in MONGO_URI
+### Environment Variables
 
-Storage (Supabase):
-- Create bucket named "recipes"
-- Configure RLS policies
-- Add keys to environment
+Set these in Vercel:
+
+- `DATABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`
+
+## Features
+
+- User authentication via Supabase
+- Recipe creation and management
+- Image upload to Supabase Storage
+- AI-powered recipe generation
+- Weekly meal planning
+- Responsive design
 
 ## Troubleshooting
 
-Port in use (Windows):
-```powershell
-netstat -ano | findstr :5000
-taskkill /PID <PID> /F
-```
+### Database Connection
 
-Port in use (macOS/Linux):
-```bash
-lsof -ti:5000 | xargs kill -9
-```
+Ensure DATABASE_URL is correctly formatted and accessible from your deployment environment.
 
-MongoDB connection failed:
-- Verify connection string
-- Check MongoDB is running
-- For Atlas, verify IP whitelist
+### Supabase Storage
 
-Dependencies issue:
-```bash
-rm package-lock.json
-npm install
-```
+Recipe images are stored in the 'recipes' bucket. Ensure the bucket exists and has proper RLS policies.
 
-## Development Notes
+### Build Errors
 
-- Node 20+ required for both client and server
-- Environment variables required for both frontend and backend
-- JWT tokens stored in localStorage on client
-- Images uploaded to Supabase Storage with UUID paths
-- All API requests include JWT in Authorization header
-
-## License
-
-Private project.
+If you encounter build errors, verify:
+- All environment variables are set
+- Prisma client is generated
+- Node version is 20+
