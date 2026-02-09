@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { createClient } from '@/lib/supabase/client';
 import LogoutButton from './LogoutButton';
+import { ChefHat, LayoutDashboard, BookOpen, Calendar } from 'lucide-react';
 
 export default function Header() {
   const [user, setUser] = useState(null);
@@ -24,27 +25,44 @@ export default function Header() {
   }, []);
 
   if (user) {
-    // Logged-in header
     return (
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0">
-              <Link href="/" className="text-2xl font-bold text-blue-600">
+      <header className="glass-nav sticky top-0 z-50 border-b border-sage-200/30">
+        <div className="container-luxury">
+          <div className="flex justify-between items-center h-20">
+            <Link href="/" className="flex items-center gap-2 group">
+              <div className="w-10 h-10 bg-sage-600 rounded-lg flex items-center justify-center group-hover:bg-sage-700 transition-colors">
+                <ChefHat className="w-6 h-6 text-white" />
+              </div>
+              <span className="text-2xl font-semibold text-charcoal-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 Palate
+              </span>
+            </Link>
+            
+            <nav className="hidden md:flex items-center gap-2">
+              <Link 
+                href="/dashboard" 
+                className="flex items-center gap-2 px-4 py-2 text-charcoal-700 hover:text-sage-700 hover:bg-sage-50 rounded-lg transition-all duration-200"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span className="font-medium">Dashboard</span>
               </Link>
-            </div>
-            <nav className="hidden md:flex items-center space-x-4">
-              <Link href="/dashboard" className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                Dashboard
+              <Link 
+                href="/recipes" 
+                className="flex items-center gap-2 px-4 py-2 text-charcoal-700 hover:text-sage-700 hover:bg-sage-50 rounded-lg transition-all duration-200"
+              >
+                <BookOpen className="w-4 h-4" />
+                <span className="font-medium">My Recipes</span>
               </Link>
-              <Link href="/recipes" className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                My Recipes
+              <Link 
+                href="/planner" 
+                className="flex items-center gap-2 px-4 py-2 text-charcoal-700 hover:text-sage-700 hover:bg-sage-50 rounded-lg transition-all duration-200"
+              >
+                <Calendar className="w-4 h-4" />
+                <span className="font-medium">Meal Planner</span>
               </Link>
-              <Link href="/planner" className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                Meal Planner
-              </Link>
-              <LogoutButton />
+              <div className="ml-2">
+                <LogoutButton />
+              </div>
             </nav>
           </div>
         </div>
@@ -52,25 +70,32 @@ export default function Header() {
     );
   }
 
-  // Not logged-in header
   return (
-    <header className="bg-white shadow-sm">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          <div className="flex-shrink-0">
-            <Link href="/" className="text-2xl font-bold text-blue-600">
-              Palate
-            </Link>
-          </div>
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-4">
-              <Link href="/login" className="text-gray-500 hover:bg-gray-100 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium">
-                Log In
-              </Link>
-              <Link href="/signup" className="bg-blue-600 text-white hover:bg-blue-700 px-3 py-2 rounded-md text-sm font-medium">
-                Sign Up
-              </Link>
+    <header className="glass-nav sticky top-0 z-50 border-b border-sage-200/30">
+      <div className="container-luxury">
+        <div className="flex justify-between items-center h-20">
+          <Link href="/" className="flex items-center gap-2 group">
+            <div className="w-10 h-10 bg-sage-600 rounded-lg flex items-center justify-center group-hover:bg-sage-700 transition-colors">
+              <ChefHat className="w-6 h-6 text-white" />
             </div>
+            <span className="text-2xl font-semibold text-charcoal-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Palate
+            </span>
+          </Link>
+          
+          <div className="flex items-center gap-3">
+            <Link 
+              href="/login" 
+              className="px-5 py-2 text-charcoal-700 hover:text-sage-700 font-medium transition-colors"
+            >
+              Sign In
+            </Link>
+            <Link 
+              href="/signup" 
+              className="px-6 py-2.5 bg-sage-600 text-white rounded-lg hover:bg-sage-700 font-medium transition-all duration-300 shadow-sm hover:shadow-md"
+            >
+              Get Started
+            </Link>
           </div>
         </div>
       </div>

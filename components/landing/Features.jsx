@@ -1,57 +1,76 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { BrainCircuit, CalendarHeart, Users } from "lucide-react";
+import { ChefHat, Sparkles, BookOpen } from "lucide-react";
 
 const features = [
   {
-    name: "AI Recipe Gen",
-    description: "Unleash your creativity. Generate unique recipes from simple text prompts with our advanced AI.",
-    icon: BrainCircuit,
+    name: "AI Recipe Generation",
+    description: "Transform inspiration into culinary masterpieces. Our AI crafts sophisticated recipes tailored to your preferences and available ingredients.",
+    icon: ChefHat,
   },
   {
-    name: "Meal Planning",
-    description: "Tell us your goals, and our AI will craft a perfect weekly meal plan from your recipe collection.",
-    icon: CalendarHeart,
+    name: "Intelligent Planning",
+    description: "Effortlessly orchestrate your weekly menu. Our AI curates balanced meal plans that align with your dietary goals and lifestyle.",
+    icon: Sparkles,
   },
   {
-    name: "Community",
-    description: "Explore a universe of flavors by browsing delicious recipes shared by other food lovers in the community.",
-    icon: Users,
+    name: "Personal Collection",
+    description: "Build your digital cookbook. Save, organize, and revisit your favorite recipes in a beautifully designed interface.",
+    icon: BookOpen,
   },
 ];
 
 export default function Features() {
-  const FADE_IN_ANIMATION_VARIANTS = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 50 } },
+  const CARD_VARIANTS = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
   };
 
   return (
-    <div className="py-24 bg-white">
-      <div className="container max-w-6xl px-4 mx-auto">
-        <div className="text-center">
-          <h2 className="text-base font-semibold tracking-wider text-blue-600 uppercase">Features</h2>
-          <p className="mt-2 text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl">
-            Everything you need to master your meals
-          </p>
+    <div className="py-32 bg-gradient-to-b from-white via-cream-50 to-white">
+      <div className="container-luxury">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <motion.p 
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            className="text-sm font-medium tracking-widest text-sage-600 uppercase mb-4"
+          >
+            Designed for Excellence
+          </motion.p>
+          <motion.h2 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="text-4xl md:text-5xl font-light tracking-tight text-charcoal-900"
+          >
+            Everything You Need to
+            <span className="block font-semibold italic text-sage-700 mt-2">Master Your Culinary Journey</span>
+          </motion.h2>
         </div>
-        <div className="grid gap-12 mt-12 md:grid-cols-3">
+        
+        <div className="grid gap-8 md:grid-cols-3">
           {features.map((feature, i) => (
             <motion.div
               key={feature.name}
               initial="hidden"
               whileInView="show"
-              viewport={{ once: true, amount: 0.5 }}
-              variants={FADE_IN_ANIMATION_VARIANTS}
-              transition={{ delay: i * 0.1 }}
-              className="flex flex-col items-center p-8 text-center bg-gray-50 border border-gray-200 rounded-lg"
+              viewport={{ once: true, amount: 0.3 }}
+              variants={CARD_VARIANTS}
+              transition={{ delay: i * 0.15 }}
+              className="group relative bg-white rounded-2xl p-8 border border-sage-100 hover:border-sage-200 hover:shadow-xl transition-all duration-500"
             >
-              <div className="flex items-center justify-center w-16 h-16 text-white bg-blue-500 rounded-full">
-                <feature.icon className="w-8 h-8" />
+              <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-sage-100/50 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+              
+              <div className="relative">
+                <div className="inline-flex items-center justify-center w-14 h-14 bg-sage-100 rounded-xl group-hover:bg-sage-600 transition-colors duration-500">
+                  <feature.icon className="w-7 h-7 text-sage-600 group-hover:text-white transition-colors duration-500" />
+                </div>
+                <h3 className="mt-6 text-2xl font-semibold text-charcoal-900">{feature.name}</h3>
+                <p className="mt-4 text-charcoal-600 leading-relaxed font-light">{feature.description}</p>
               </div>
-              <h3 className="mt-6 text-xl font-semibold text-gray-900">{feature.name}</h3>
-              <p className="mt-4 text-gray-600">{feature.description}</p>
             </motion.div>
           ))}
         </div>
@@ -59,4 +78,3 @@ export default function Features() {
     </div>
   );
 }
-

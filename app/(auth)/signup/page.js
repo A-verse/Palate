@@ -1,9 +1,10 @@
-'use client'; // This component handles user interaction
+'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { ChefHat, Mail, Lock, User, CheckCircle2, ArrowRight, RefreshCw } from 'lucide-react';
 
 export default function SignupPage() {
   const [name, setName] = useState('');
@@ -14,6 +15,7 @@ export default function SignupPage() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [confirmationEmail, setConfirmationEmail] = useState('');
   const [resendLoading, setResendLoading] = useState(false);
+  const [resendSuccess, setResendSuccess] = useState(false);
   const router = useRouter();
   const supabase = createClient();
 
@@ -40,7 +42,7 @@ export default function SignupPage() {
         setShowConfirmation(true);
       }
     } catch (error) {
-      setError('An unexpected error occurred');
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -49,6 +51,7 @@ export default function SignupPage() {
   const handleResendEmail = async () => {
     setResendLoading(true);
     setError('');
+    setResendSuccess(false);
 
     try {
       const { error } = await supabase.auth.resend({
@@ -59,8 +62,7 @@ export default function SignupPage() {
       if (error) {
         setError(error.message);
       } else {
-        setError('');
-        alert('Confirmation email resent! Check your inbox.');
+        setResendSuccess(true);
       }
     } catch (error) {
       setError('Failed to resend email. Please try again.');
@@ -69,151 +71,205 @@ export default function SignupPage() {
     }
   };
 
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md space-y-8">
-        {showConfirmation ? (
-          // Email Confirmation UI
-          <div>
+  if (showConfirmation) {
+    return (
+      <div className="flex min-h-screen items-center justify-center py-16 px-4 bg-gradient-to-br from-cream-50 via-cream-100 to-sage-50/30">
+        <div className="w-full max-w-md">
+          <div className="glass-card rounded-2xl p-8 md:p-10 shadow-xl">
             <div className="text-center">
-              <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                <svg className="h-6 w-6 text-green-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                </svg>
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
+                <CheckCircle2 className="w-8 h-8 text-green-600" />
               </div>
-              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Verify Your Email</h2>
-              <p className="mt-2 text-sm text-gray-600">
-                We've sent a confirmation link to <span className="font-semibold">{confirmationEmail}</span>
+              <h1 className="text-4xl font-light text-charcoal-900 mb-3" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                Verify Your Email
+              </h1>
+              <p className="text-charcoal-600 font-light mb-2">
+                We've sent a confirmation link to
               </p>
+              <p className="text-sage-700 font-medium">{confirmationEmail}</p>
             </div>
 
-            <div className="mt-8 space-y-6">
-              <div className="rounded-md bg-blue-50 p-4 text-sm text-blue-700">
-                <p className="font-semibold mb-2">Next steps:</p>
-                <ol className="list-decimal list-inside space-y-1">
-                  <li>Check your email inbox (and spam folder)</li>
-                  <li>Click the confirmation link in the email</li>
-                  <li>Return here and sign in with your credentials</li>
+            <div className="mt-8 space-y-5">
+              <div className="bg-sage-50 border border-sage-200 rounded-lg p-5">
+                <p className="font-medium text-charcoal-900 mb-3">Next Steps:</p>
+                <ol className="space-y-2 text-sm text-charcoal-700">
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 font-semibold">1.</span>
+                    <span>Check your email inbox (and spam folder)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 font-semibold">2.</span>
+                    <span>Click the confirmation link in the email</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-sage-600 font-semibold">3.</span>
+                    <span>Return and sign in with your credentials</span>
+                  </li>
                 </ol>
               </div>
 
               {error && (
-                <div className="rounded-md bg-red-50 p-4">
-                  <div className="text-sm text-red-700">{error}</div>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-sm text-red-700">{error}</p>
+                </div>
+              )}
+
+              {resendSuccess && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-sm text-green-700">Confirmation email sent! Check your inbox.</p>
                 </div>
               )}
 
               <button
                 onClick={handleResendEmail}
                 disabled={resendLoading}
-                className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:bg-gray-100 disabled:text-gray-500"
+                className="w-full flex items-center justify-center gap-2 btn-secondary disabled:opacity-50"
               >
-                {resendLoading ? 'Sending...' : 'Resend Confirmation Email'}
+                {resendLoading ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-sage-600 border-t-transparent rounded-full animate-spin" />
+                    <span>Sending...</span>
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-5 h-5" />
+                    <span>Resend Confirmation Email</span>
+                  </>
+                )}
               </button>
 
-              <div className="text-center">
-                <p className="text-sm text-gray-600">
+              <div className="pt-4 border-t border-sage-200/50 text-center">
+                <p className="text-sm text-charcoal-600">
                   Already confirmed?{' '}
-                  <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+                  <Link href="/login" className="font-medium text-sage-700 hover:text-sage-800 underline underline-offset-2">
                     Sign in here
                   </Link>
                 </p>
               </div>
             </div>
           </div>
-        ) : (
-          // Signup Form
-          <>
-            <div className="text-center">
-              <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" className="mx-auto text-blue-500">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z" fill="currentColor"/>
-                <path d="M15.5 8.5c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zm-7 0c-.83 0-1.5.67-1.5 1.5s.67 1.5 1.5 1.5 1.5-.67 1.5-1.5-.67-1.5-1.5-1.5zM12 14c-2.33 0-4.31 1.46-5.11 3.5h10.22c-.8-2.04-2.78-3.5-5.11-3.5z" fill="currentColor"/>
-              </svg>
-              <h2 className="mt-6 text-3xl font-extrabold text-gray-900">Create your Palate Account</h2>
-              <p className="mt-2 text-sm text-gray-600">Start your personalized culinary journey.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex min-h-screen items-center justify-center py-16 px-4 bg-gradient-to-br from-cream-50 via-cream-100 to-sage-50/30">
+      <div className="w-full max-w-md">
+        <div className="glass-card rounded-2xl p-8 md:p-10 shadow-xl">
+          <div className="text-center mb-8">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-sage-600 rounded-2xl mb-6">
+              <ChefHat className="w-8 h-8 text-white" />
+            </div>
+            <h1 className="text-4xl font-light text-charcoal-900 mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Join Palate
+            </h1>
+            <p className="text-charcoal-600 font-light">Begin your personalized culinary journey</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-5">
+            {error && (
+              <div className="rounded-lg bg-red-50 border border-red-200 p-4">
+                <p className="text-sm text-red-700">{error}</p>
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-charcoal-700 mb-2">
+                Full Name
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <User className="h-5 w-5 text-sage-400" />
+                </div>
+                <input
+                  id="name"
+                  name="name"
+                  type="text"
+                  autoComplete="name"
+                  required
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  className="input-luxury pl-10"
+                  placeholder="Enter your name"
+                />
+              </div>
             </div>
 
-            <form onSubmit={handleSubmit} className="mt-8 space-y-6">
-              {error && (
-                <div className="rounded-md bg-red-50 p-4">
-                  <div className="text-sm text-red-700">{error}</div>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-charcoal-700 mb-2">
+                Email Address
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Mail className="h-5 w-5 text-sage-400" />
                 </div>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="input-luxury pl-10"
+                  placeholder="you@example.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-charcoal-700 mb-2">
+                Password
+              </label>
+              <div className="relative">
+                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                  <Lock className="h-5 w-5 text-sage-400" />
+                </div>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  autoComplete="new-password"
+                  required
+                  minLength={6}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="input-luxury pl-10"
+                  placeholder="At least 6 characters"
+                />
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full flex items-center justify-center gap-2 btn-primary disabled:opacity-50 disabled:cursor-not-allowed group"
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <span>Creating account...</span>
+                </>
+              ) : (
+                <>
+                  <span>Create Account</span>
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </>
               )}
+            </button>
+          </form>
 
-              <div className="space-y-4">
-                <div>
-                  <label htmlFor="name" className="sr-only">
-                    Name
-                  </label>
-                  <input
-                    id="name"
-                    name="name"
-                    type="text"
-                    autoComplete="name"
-                    required
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
-                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Full Name"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="email" className="sr-only">
-                    Email address
-                  </label>
-                  <input
-                    id="email"
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Email address"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="password" className="sr-only">
-                    Password
-                  </label>
-                  <input
-                    id="password"
-                    name="password"
-                    type="password"
-                    autoComplete="new-password"
-                    required
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
-                    className="relative block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
-                    placeholder="Password"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="group relative flex w-full justify-center rounded-md border border-transparent bg-blue-500 py-2 px-4 text-sm font-medium text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:bg-blue-300"
-                >
-                  {loading ? 'Creating account...' : 'Create account'}
-                </button>
-              </div>
-
-              <div className="text-center">
-                <p className="text-sm text-gray-600">
-                  Already have an account?{' '}
-                  <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
-                    Sign in
-                  </Link>
-                </p>
-              </div>
-            </form>
-          </>
-        )}
+          <div className="mt-8 pt-6 border-t border-sage-200/50 text-center">
+            <p className="text-sm text-charcoal-600">
+              Already have an account?{' '}
+              <Link href="/login" className="font-medium text-sage-700 hover:text-sage-800 underline underline-offset-2">
+                Sign in
+              </Link>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
 }
-

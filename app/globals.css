@@ -2,11 +2,94 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --sage-50: #f6f7f6;
+  --sage-100: #e8ebe9;
+  --sage-200: #d1d7d3;
+  --sage-300: #a8b5ad;
+  --sage-400: #7d8f84;
+  --sage-500: #5f7169;
+  --sage-600: #4a5a51;
+  --sage-700: #3d4a42;
+  --sage-800: #323d37;
+  --sage-900: #2b342f;
+  
+  --cream-50: #fdfdfb;
+  --cream-100: #faf9f5;
+  --cream-200: #f5f3eb;
+  --cream-300: #ebe8db;
+  --cream-400: #ddd8c7;
+  --cream-500: #c9c2ad;
+  
+  --charcoal-50: #f7f7f7;
+  --charcoal-100: #e3e3e3;
+  --charcoal-200: #c8c8c8;
+  --charcoal-300: #a4a4a4;
+  --charcoal-400: #818181;
+  --charcoal-500: #666666;
+  --charcoal-600: #515151;
+  --charcoal-700: #434343;
+  --charcoal-800: #383838;
+  --charcoal-900: #2d2d2d;
+}
+
+@layer base {
+  body {
+    @apply bg-cream-100 text-charcoal-900;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    @apply text-charcoal-900;
+  }
+}
+
+@layer components {
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-sage-200/50 shadow-lg;
+  }
+  
+  .glass-nav {
+    @apply bg-cream-50/80 backdrop-blur-lg border-b border-sage-200/30;
+  }
+  
+  .btn-primary {
+    @apply bg-sage-600 text-white hover:bg-sage-700 transition-all duration-300 font-medium px-6 py-3 rounded-lg shadow-sm hover:shadow-md;
+  }
+  
+  .btn-secondary {
+    @apply bg-white text-sage-700 hover:bg-sage-50 border border-sage-300 transition-all duration-300 font-medium px-6 py-3 rounded-lg;
+  }
+  
+  .input-luxury {
+    @apply w-full px-4 py-3 border border-sage-200 rounded-lg bg-white/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-sage-500/50 focus:border-sage-500 transition-all duration-200;
+  }
+  
+  .bento-card {
+    @apply bg-white rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 border border-sage-100;
+  }
+}
+
 @layer utilities {
   .line-clamp-2 {
     overflow: hidden;
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
+  }
+  
+  .line-clamp-3 {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+  }
+  
+  .container-luxury {
+    @apply max-w-7xl mx-auto px-6 lg:px-8;
+    width: 90%;
   }
 }

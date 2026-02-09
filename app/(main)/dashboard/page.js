@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import { PrismaClient } from '@prisma/client';
 import Link from 'next/link';
-import { ChefHat, Calendar, TrendingUp } from 'lucide-react';
+import { ChefHat, Calendar, BookOpen, Plus, ArrowRight, Sparkles } from 'lucide-react';
 
 const prisma = new PrismaClient();
 
@@ -15,135 +15,165 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  // Get stats
-  const recipeCount = await prisma.recipe.count({
-    where: { authorId: user.id },
-  });
+  let recipeCount = 0;
+  let mealPlanCount = 0;
+  let recentRecipes = [];
 
-  const mealPlanCount = await prisma.mealPlan.count({
-    where: { authorId: user.id },
-  });
+  try {
+    recipeCount = await prisma.recipe.count({
+      where: { authorId: user.id },
+    });
 
-  // Get recent recipes
-  const recentRecipes = await prisma.recipe.findMany({
-    where: { authorId: user.id },
-    orderBy: { createdAt: 'desc' },
-    take: 3,
-  });
+    mealPlanCount = await prisma.mealPlan.count({
+      where: { authorId: user.id },
+    });
+
+    recentRecipes = await prisma.recipe.findMany({
+      where: { authorId: user.id },
+      orderBy: { createdAt: 'desc' },
+      take: 4,
+    });
+  } catch (error) {
+    // Database not configured yet - show empty state
+  }
+
+  const userName = user.user_metadata?.name || user.email?.split('@')[0] || 'Chef';
 
   return (
-    <div className="container max-w-6xl px-4 py-12 mx-auto">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Welcome back, {user.email}!</h1>
-        <p className="mt-1 text-gray-600">
-          Here's what's happening with your culinary journey.
-        </p>
-      </div>
-
-      {/* Quick Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-blue-100 rounded-lg">
-              <ChefHat className="w-6 h-6 text-blue-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Recipes Saved</p>
-              <p className="text-2xl font-bold text-gray-900">{recipeCount}</p>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-cream-50 via-cream-100 to-sage-50/20 py-12">
+      <div className="container-luxury">
+        <div className="mb-12">
+          <h1 className="text-5xl font-light text-charcoal-900 mb-3" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            Welcome back, <span className="font-semibold italic text-sage-700">{userName}</span>
+          </h1>
+          <p className="text-lg text-charcoal-600 font-light">
+            Your culinary journey continues
+          </p>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <Calendar className="w-6 h-6 text-green-600" />
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <div className="bento-card group hover:border-sage-200 cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-sage-100 rounded-xl group-hover:bg-sage-600 transition-colors duration-300">
+                <BookOpen className="w-6 h-6 text-sage-600 group-hover:text-white transition-colors duration-300" />
+              </div>
+              <span className="text-3xl font-light text-charcoal-900">{recipeCount}</span>
             </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Meal Plans</p>
-              <p className="text-2xl font-bold text-gray-900">{mealPlanCount}</p>
-            </div>
+            <h3 className="text-sm font-medium text-charcoal-600 uppercase tracking-wide">Recipes Saved</h3>
           </div>
+
+          <div className="bento-card group hover:border-sage-200 cursor-pointer">
+            <div className="flex items-start justify-between mb-4">
+              <div className="p-3 bg-sage-100 rounded-xl group-hover:bg-sage-600 transition-colors duration-300">
+                <Calendar className="w-6 h-6 text-sage-600 group-hover:text-white transition-colors duration-300" />
+              </div>
+              <span className="text-3xl font-light text-charcoal-900">{mealPlanCount}</span>
+            </div>
+            <h3 className="text-sm font-medium text-charcoal-600 uppercase tracking-wide">Meal Plans</h3>
+          </div>
+
+          <Link href="/recipes/new" className="bento-card group hover:border-sage-300 hover:bg-sage-50/50 cursor-pointer md:col-span-2">
+            <div className="flex items-center justify-between h-full">
+              <div>
+                <h3 className="text-xl font-semibold text-charcoal-900 mb-2">Create New Recipe</h3>
+                <p className="text-sm text-charcoal-600 font-light">Add to your collection</p>
+              </div>
+              <div className="p-4 bg-sage-600 rounded-xl group-hover:bg-sage-700 transition-colors">
+                <Plus className="w-6 h-6 text-white" />
+              </div>
+            </div>
+          </Link>
         </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <div className="flex items-center">
-            <div className="p-2 bg-purple-100 rounded-lg">
-              <TrendingUp className="w-6 h-6 text-purple-600" />
-            </div>
-            <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">This Week</p>
-              <p className="text-2xl font-bold text-gray-900">7 meals planned</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Recent Activity */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Recent Recipes</h2>
-          {recentRecipes.length > 0 ? (
-            <div className="space-y-4">
-              {recentRecipes.map((recipe) => (
-                <div key={recipe.id} className="flex items-center space-x-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
-                    {recipe.imageUrl ? (
-                      <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover rounded-lg" />
-                    ) : (
-                      <ChefHat className="w-6 h-6 text-gray-400" />
-                    )}
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="text-sm font-medium text-gray-900">{recipe.title}</h3>
-                    <p className="text-sm text-gray-500">
-                      {recipe.createdAt.toLocaleDateString()}
-                    </p>
-                  </div>
-                  <Link
-                    href={`/recipes/${recipe.id}`}
-                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
-                  >
-                    View
-                  </Link>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <ChefHat className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-500 mb-4">No recipes yet. Start building your collection!</p>
-              <Link
-                href="/recipes/new"
-                className="inline-flex items-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-              >
-                Create Your First Recipe
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bento-card">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-2xl font-semibold text-charcoal-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                Recent Recipes
+              </h2>
+              <Link href="/recipes" className="text-sage-700 hover:text-sage-800 text-sm font-medium flex items-center gap-1">
+                View All
+                <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
-          )}
-        </div>
 
-        <div className="bg-white border border-gray-200 rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Quick Actions</h2>
-          <div className="space-y-3">
-            <Link
-              href="/recipes/new"
-              className="block w-full px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-center font-medium"
-            >
-              Add New Recipe
-            </Link>
-            <Link
-              href="/planner"
-              className="block w-full px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 text-center font-medium"
-            >
-              Plan This Week's Meals
-            </Link>
-            <Link
-              href="/recipes"
-              className="block w-full px-4 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 text-center font-medium"
-            >
-              Browse My Recipes
-            </Link>
+            {recentRecipes.length > 0 ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {recentRecipes.map((recipe) => (
+                  <Link
+                    key={recipe.id}
+                    href={`/recipes/${recipe.id}`}
+                    className="group flex items-start gap-4 p-4 rounded-xl hover:bg-sage-50/50 transition-all duration-300 border border-transparent hover:border-sage-200"
+                  >
+                    <div className="w-16 h-16 bg-sage-100 rounded-lg flex items-center justify-center flex-shrink-0 overflow-hidden">
+                      {recipe.imageUrl ? (
+                        <img src={recipe.imageUrl} alt={recipe.title} className="w-full h-full object-cover" />
+                      ) : (
+                        <ChefHat className="w-7 h-7 text-sage-500" />
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h3 className="font-medium text-charcoal-900 group-hover:text-sage-700 transition-colors line-clamp-2">
+                        {recipe.title}
+                      </h3>
+                      <p className="text-sm text-charcoal-500 mt-1">
+                        {recipe.createdAt.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                      </p>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-16">
+                <div className="inline-flex items-center justify-center w-20 h-20 bg-sage-100 rounded-full mb-6">
+                  <ChefHat className="w-10 h-10 text-sage-500" />
+                </div>
+                <h3 className="text-xl font-semibold text-charcoal-900 mb-2">No Recipes Yet</h3>
+                <p className="text-charcoal-600 mb-6 font-light">Start building your culinary collection</p>
+                <Link href="/recipes/new" className="btn-primary inline-flex items-center gap-2">
+                  <Plus className="w-5 h-5" />
+                  Create Your First Recipe
+                </Link>
+              </div>
+            )}
+          </div>
+
+          <div className="bento-card">
+            <div className="flex items-center gap-2 mb-6">
+              <Sparkles className="w-5 h-5 text-sage-600" />
+              <h2 className="text-2xl font-semibold text-charcoal-900" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                Quick Actions
+              </h2>
+            </div>
+            <div className="space-y-3">
+              <Link
+                href="/recipes/new"
+                className="group block w-full px-5 py-4 bg-sage-600 text-white rounded-xl hover:bg-sage-700 transition-all duration-300 shadow-sm hover:shadow-md"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Add Recipe</span>
+                  <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </div>
+              </Link>
+              <Link
+                href="/planner"
+                className="group block w-full px-5 py-4 bg-white border-2 border-sage-200 text-sage-700 rounded-xl hover:bg-sage-50 hover:border-sage-300 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Meal Planner</span>
+                  <Calendar className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </div>
+              </Link>
+              <Link
+                href="/recipes"
+                className="group block w-full px-5 py-4 bg-white border-2 border-sage-200 text-sage-700 rounded-xl hover:bg-sage-50 hover:border-sage-300 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="font-medium">Browse Recipes</span>
+                  <BookOpen className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                </div>
+              </Link>
+            </div>
           </div>
         </div>
       </div>

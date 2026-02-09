@@ -11,7 +11,6 @@ export async function middleware(request) {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-  // Skip middleware if Supabase is not configured
   if (!supabaseUrl || !supabaseKey || supabaseUrl === 'your_supabase_url' || supabaseKey === 'your_supabase_anon_key') {
     return response
   }
@@ -63,25 +62,30 @@ export async function middleware(request) {
   )
 
   const { data: { user } } = await supabase.auth.getUser()
-  const { pathname } = request.nextUrl;
+  const { pathname } = request.nextUrl
 
-  // Protect dashboard route
-  if (!user && pathname.startsWith('/dashboard')) {
+  const protectedRoutes = ['/dashboard', '/recipes', '/planner']
+  const authRoutes = ['/login', '/signup']
+  
+  const isProtectedRoute = protectedRoutes.some(route => pathname.startsWith(route))
+  const isAuthRoute = authRoutes.includes(pathname)
+
+  if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  // Redirect logged-in users from auth pages to dashboard
-  if (user && (pathname === '/login' || pathname === '/signup')) {
-     return NextResponse.redirect(new URL('/dashboard', request.url))
+  if (user && isAuthRoute) {
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   return response
 }
 
-// Specify which paths the middleware should run on
 export const config = {
   matcher: [
     '/dashboard/:path*',
+    '/recipes/:path*',
+    '/planner/:path*',
     '/login',
     '/signup',
   ],
